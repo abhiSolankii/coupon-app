@@ -9,8 +9,8 @@ const generateToken = (res, adminId) => {
   res.cookie("jwt", token, {
     maxAge: 30 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    secure: process.env.NODE_ENV === "production", // Set secure to true in production
+    sameSite: "none",
+    secure: true,
   });
 };
 
