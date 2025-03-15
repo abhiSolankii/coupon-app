@@ -14,10 +14,26 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+// Parse frontend URLs from environment variables into an array
+const allowedOrigins = [
+  process.env.FRONTEND_LOCAL_URL,
+  process.env.FRONTEND_PRODUCTION_URL,
+].filter((url) => url); // Remove undefined or empty URLs
+
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // Check if the incoming origin is in the allowedOrigins array
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
