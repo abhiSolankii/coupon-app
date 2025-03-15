@@ -32,6 +32,7 @@ export function AuthProvider({ children }) {
 
       // Clear client-side data
       setAdmin(null);
+      localStorage.removeItem("jwtToken");
       localStorage.clear(); // Clear all localStorage items
       document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // Clear JWT cookie client-side
 

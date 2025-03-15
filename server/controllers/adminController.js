@@ -1,17 +1,11 @@
 import Admin from "../models/adminModel.js";
 import jwt from "jsonwebtoken";
 
-const generateToken = (res, adminId) => {
+const generateToken = (adminId) => {
   const token = jwt.sign({ adminId }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
-
-  res.cookie("jwt", token, {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  });
+  return token;
 };
 
 // @desc    Auth admin & get token
@@ -23,10 +17,11 @@ const authAdmin = async (req, res) => {
     const admin = await Admin.findOne({ email });
 
     if (admin && (await admin.matchPassword(password))) {
-      generateToken(res, admin._id);
+      const token = generateToken(admin._id);
       res.json({
         _id: admin._id,
         email: admin.email,
+        token, // Send token in response
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -54,7 +49,14 @@ const registerAdmin = async (req, res) => {
       password,
     });
 
-    if (!admin) {
+    if (admin) {
+      const token = generateToken(admin._id);
+      res.status(201).json({
+        _id: admin._id,
+        email: admin.email,
+        token, // Send token in response
+      });
+    } else {
       res.status(400).json({ message: "Invalid admin data" });
     }
   } catch (error) {
@@ -66,11 +68,7 @@ const registerAdmin = async (req, res) => {
 // @route   POST /api/admin/logout
 // @access  Private
 const logoutAdmin = async (req, res) => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0),
-    secure: process.env.NODE_ENV === "production", // Set secure to true in production
-  });
+  // No cookie to clear; client will handle token removal from localStorage
   res.json({ message: "Logged out successfully" });
 };
 

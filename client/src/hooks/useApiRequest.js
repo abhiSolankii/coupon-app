@@ -2,13 +2,26 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 
 const api = axios.create({
-  // baseURL: "http://localhost:5000/api", //for local development
-  baseURL: "https://coupon-app-5lw4.onrender.com/api", //for production
-  withCredentials: true,
+  // baseURL: "http://localhost:5000/api", // for local development
+  baseURL: "https://coupon-app-5lw4.onrender.com/api", // for production
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Add a request interceptor to include the token in the Authorization header
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const useApiRequest = () => {
   const [loading, setLoading] = useState(false);
@@ -18,13 +31,11 @@ export const useApiRequest = () => {
     setLoading(true);
     setError(null);
     try {
-      // Only include data for POST and PUT requests
       const config = {
         method,
         url,
       };
 
-      // Add data only for POST and PUT methods
       if (["post", "put"].includes(method.toLowerCase()) && data) {
         config.data = data;
       }
@@ -32,7 +43,6 @@ export const useApiRequest = () => {
       const response = await api(config);
       return response.data;
     } catch (err) {
-      // Store the error for potential use and rethrow it
       setError(err);
       throw err;
     } finally {

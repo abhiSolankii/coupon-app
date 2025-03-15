@@ -15,7 +15,11 @@ function AdminLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const response = await login(email, password);
+      // Store token in localStorage
+      if (response.token) {
+        localStorage.setItem("jwtToken", response.token);
+      }
       toast.success("Access Granted!");
       navigate("/admin");
     } catch (error) {

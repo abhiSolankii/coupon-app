@@ -3,10 +3,14 @@ import Admin from "../models/adminModel.js";
 
 const protect = async (req, res, next) => {
   let token;
-  token = req.cookies.jwt;
 
-  if (token) {
+  // Check for token in Authorization header
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     try {
+      token = req.headers.authorization.split(" ")[1]; // Extract token from "Bearer <token>"
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.admin = await Admin.findById(decoded.adminId).select("-password");
       next();
