@@ -14,6 +14,9 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+// Enable trust proxy to handle X-Forwarded-For headers correctly
+app.set("trust proxy", true);
+
 // Parse frontend URLs from environment variables into an array
 const allowedOrigins = [
   process.env.FRONTEND_LOCAL_URL,
@@ -45,7 +48,7 @@ app.use(cookieParser());
 app.use("/api/coupons", couponRoutes);
 app.use("/api/admin", adminRoutes);
 
-//check if server is live
+// Check if server is live
 app.get("/", (req, res) => {
   res.send("Server is live");
 });
