@@ -1,0 +1,25 @@
+# railway.toml
+
+[build]
+  # Specify the root directory where the build process should start
+  root = "backend"
+
+[deploy]
+  # Optional: Define the start command to run your server
+  startCommand = "node server.js"
+
+# Optional: Define environment variables (can also be set in the Railway dashboard)
+[env]
+  PORT = "8080" # Railway assigns a port; this ensures your app listens correctly
+  NODE_ENV = "production"
+
+# Optional: Define service-specific settings
+[[services]]
+  # Service name (optional, defaults to the project name)
+  name = "coupon-backend"
+  # GitHub repository (optional if deploying from the same repo)
+  gitRepo = "your-username/coupon-management-system"
+  # Build command (optional, defaults to Nixpacks detection)
+  buildCommand = "npm install"
+  # Start command (overrides the deploy.startCommand if specified here)
+  startCommand = "node server.js"
