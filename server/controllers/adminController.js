@@ -9,7 +9,8 @@ const generateToken = (res, adminId) => {
   res.cookie("jwt", token, {
     maxAge: 30 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    secure: process.env.NODE_ENV === "production", // Set secure to true in production
   });
 };
 
@@ -68,6 +69,7 @@ const logoutAdmin = async (req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
+    secure: process.env.NODE_ENV === "production", // Set secure to true in production
   });
   res.json({ message: "Logged out successfully" });
 };
