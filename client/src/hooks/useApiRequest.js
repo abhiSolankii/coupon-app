@@ -3,7 +3,7 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: "http://localhost:5000/api", //for local development
-  baseURL: "https://coupon-app-gky9.onrender.com/api", //for production
+  baseURL: "https://coupon-app-5lw4.onrender.com/api", //for production
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
