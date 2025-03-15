@@ -7,10 +7,9 @@ const generateToken = (res, adminId) => {
   });
 
   res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-    sameSite: "strict",
     maxAge: 30 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "strict",
   });
 };
 
@@ -54,13 +53,7 @@ const registerAdmin = async (req, res) => {
       password,
     });
 
-    if (admin) {
-      generateToken(res, admin._id);
-      res.status(201).json({
-        _id: admin._id,
-        email: admin.email,
-      });
-    } else {
+    if (!admin) {
       res.status(400).json({ message: "Invalid admin data" });
     }
   } catch (error) {
